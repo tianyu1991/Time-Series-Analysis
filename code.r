@@ -1,3 +1,18 @@
+library(ggplot2)
+library(datasets)
+library(dplyr)
+
+initial<-read.csv("cost.csv",nrows=100,header=TRUE,stringsAsFactors=FALSE)
+classes<-sapply(initial,class)
+cost<-read.csv("cost.csv",header=TRUE,stringsAsFactors=FALSE,colClasses=classes)
+
+colnames(cost) <-c("Date","Open","High","Low","Close","Volumn")
+cost$Date<-as.Date(cost$Date,format="%Y-%m-%d")
+
+cost <-cost[order(cost$Date),] 
+#plot
+png(file="HistoricalPrices5y.png",width=580,height=480)
+ggplot(cost, aes(cost$Date,cost$Close))+
 geom_line(colour="#ffa07a")+
 ggtitle("Historical Prices for COST Stock in Five Year")+
 xlab("Date")+ylab("price($)")
@@ -72,12 +87,17 @@ Date3<-as.Date(data4$Date2.formar="%Y-%m")
 ggplot(data4, aes(Date2,mean_Close))+
 geom_point(colour="#ffa07a")
 
-x<-diff(data4$mean_Close)
+x<-diff(data4$mean_Close[40:61])
 xlag6=lag(x,6)
 y=cbind(x,xlag6)
 ar1fit=lm(y[,1]~y[,2])
 
+x<-diff(log(cost$Close))
+
+x<-diff(Log(data4$mean_Close))
+##random walk
 
 beer<-ts(data4$mean_Close,start=2011,freq=12)
 plot(stl(log(beer),s.window="periodic"))
 x2<-diff(data4$mean_Close)
+
